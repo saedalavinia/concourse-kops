@@ -1,0 +1,33 @@
+---
+jobs:
+
+- name: setup
+  plan:
+  - aggregate:
+    - get: git-repository
+      trigger: true
+    - task: create-terraform-bucket
+    config:
+      platform: linux
+      image_resource: 
+        type: docker-image
+        source:
+          repository: ((awscli_image))
+      run:
+        path: /bin/sh
+        args:
+          - -c
+          - |
+              export AWS_ACCESS_KEY_ID=((s3.aws_access_key_id))
+              export AWS_SECRET_ACCESS_KEY=((s3.aws_secret_access_key))
+              export AWS_DEFAULT_REGION=((region))
+              aws s3 mb s3://((terraform_bucket))
+
+resources:
+- name: git-repository
+  type: git
+  source:
+    uri: ((git_repository))
+    branch: master
+
+
