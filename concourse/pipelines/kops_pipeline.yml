@@ -23,6 +23,19 @@ jobs:
       vars:
         hosted_zone: ((hosted_zone))
 
+- name: create-s3
+  serial_groups: [terraform-s3]
+  serial: true
+  plan:
+  - get: git-repository
+    trigger: true
+  - put: terraform
+    params:
+      terraform_source: git-repository/concourse/terraform/s3
+      env_name: s3
+      vars:
+        bucket_name: ((kops_state_bucket))
+
 
 
 
@@ -41,6 +54,23 @@ jobs:
         hosted_zone: ((hosted_zone))
     get_params:
       action: destroy
+
+- name: destroy-s3
+  serial_groups: [terraform-s3]
+  serial: true
+  plan:
+  - get: git-repository
+    trigger: true
+  - put: terraform
+    params:
+      terraform_source: git-repository/concourse/terraform/s3
+      env_name: s3
+      action: destroy
+      vars:
+        bucket_name: ((kops_state_bucket))
+    get_params:
+      action: destroy
+
 
 # ========================= Resource Types =========================
 resource_types:
