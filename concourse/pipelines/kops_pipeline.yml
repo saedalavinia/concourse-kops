@@ -2,31 +2,13 @@
 jobs:
 
 ## Based on the steps documented here: https://kubernetes.io/docs/setup/custom-cloud/kops/
-- name: setup
+- name: create-route53
   plan:
-  - aggregate:
-    - get: git-repository
-      trigger: true
-    - 
-    - task: create-terraform-bucket
-      config:
-        platform: linux
-        image_resource: 
-          type: docker-image
-          source:
-            repository: ((awscli_image))
-        run:
-          path: /bin/sh
-          args:
-          
-          - -c
-
-            - |
-                export AWS_ACCESS_KEY_ID=((s3access_aws_access
-                _key_id))
-                export AWS_SECRET_ACCESS_KEY=((s3access_aws_secret_access_key))
-                export AWS_DEFAULT_REGION=((terraform_bucket_region))
-                aws s3 mb s3://((terraform_bucket))
+  - get: git-repository
+    trigger: true
+  - put: tf-route53
+    params:
+    - env_name: route53
 
 
 # ========================= Resource Types =========================
@@ -48,7 +30,7 @@ resources:
     uri: ((git_repository))
     branch: master
 
-- name: create-route53-records
+- name: tf-route53
   type: terraform
   source:
     terraform_source: git-repository/terraform/concourse/terraform/route53
@@ -58,8 +40,6 @@ resources:
         bucket_path: terraform/
         access_key_id: {{s3.access_aws_access_key_id}}
         secret_access_key: {{s3.aws_secret_access_key}}
-    vars:
-      tag_name: ((pcf_domain))
     env:
         AWS_ACCESS_KEY_ID: {{full.access_aws_access_key_id}}
         AWS_SECRET_ACCESS_KEY: {{full.aws_secret_access_key}}
