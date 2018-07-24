@@ -1,19 +1,20 @@
 ---
-jobs:
-
 ## Based on the steps documented here: https://kubernetes.io/docs/setup/custom-cloud/kops/
+
+jobs:
 - name: create-route53
+  serial: true
   plan:
   - get: git-repository
     trigger: true
-  - put: tf-route53
+  - put: terraform
     params:
-    - env_name: route53
+      terraform_source: git-repository/terraform/concourse/terraform/route53
+      env_name: route53
 
 
 # ========================= Resource Types =========================
 resource_types:
-
 - name: terraform
   type: docker-image
   source:
@@ -30,19 +31,17 @@ resources:
     uri: ((git_repository))
     branch: master
 
-- name: tf-route53
+- name: terraform
   type: terraform
   source:
-    terraform_source: git-repository/terraform/concourse/terraform/route53
     storage:
-      storage:
-        bucket: ((ci_bucket_region))
-        bucket_path: terraform/
-        access_key_id: {{s3.access_aws_access_key_id}}
-        secret_access_key: {{s3.aws_secret_access_key}}
+      bucket: ((ci_bucket_region))
+      bucket_path: terraform/
+      access_key_id: ((aws_access_key_id))
+      secret_access_key: ((aws_secret_access_key))
     env:
-        AWS_ACCESS_KEY_ID: {{full.access_aws_access_key_id}}
-        AWS_SECRET_ACCESS_KEY: {{full.aws_secret_access_key}}
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
 
 # - name: deploy-trigger
 #   type: semver
