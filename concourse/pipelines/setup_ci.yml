@@ -1,0 +1,24 @@
+---
+jobs:
+
+
+- name: setup
+  plan:
+  - aggregate:
+    - task: create-terraform-bucket
+      config:
+        platform: linux
+        image_resource: 
+          type: docker-image
+          source:
+            repository: ((awscli_image))
+        run:
+          path: /bin/sh
+          args:
+            - -c
+            - |
+                aws s3 mb s3://((terraform_bucket))
+        params:
+            AWS_ACCESS_KEY_ID: ((s3access_aws_access_key_id))
+            AWS_SECRET_ACCESS_KEY: ((s3access_aws_secret_access_key))
+            AWS_DEFAULT_REGION: ((terraform_bucket_region))
