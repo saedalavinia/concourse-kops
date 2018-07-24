@@ -1,0 +1,47 @@
+---
+jobs:
+
+
+- name: build-kops-image
+  plan:
+  - get: git-repository
+    trigger: true
+  - task: create-tag-file
+    config:
+      platform: linux
+      image_resource: 
+        type: docker-image
+        source:
+          repository: alpine
+      outputs: 
+      - name: tag
+      run:
+        path: /bin/sh
+        args:
+        - -c
+        - |
+            echo ((kops_version)) &> tag/tag
+  - put: kops-image
+    params:
+      build: git-repository/docker/kops
+      tag: tag/tag
+      tag_as_latest: true
+      build_args:
+        KOPS_VERSION: ((kops_version))
+
+resources:
+- name: git-repository
+  type: git
+  source:
+    uri: https://github.com/saedalavinia/concourse-kops.git
+    branch: master
+
+- name: kops-image
+  type: docker-image
+  source:
+    repository: saedalav/kops
+    username: ((docker_username))
+    password: ((docker_password))
+
+
+
