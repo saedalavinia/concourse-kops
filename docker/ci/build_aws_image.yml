@@ -1,0 +1,29 @@
+---
+jobs:
+
+
+- name: setup
+  plan:
+  - get: git-repository
+    trigger: true
+  - put: aws-image
+    params:
+      build: git-repository/docker/aws
+      tag_as_latest: true
+
+resources:
+- name: git-repository
+  type: git
+  source:
+    uri: https://github.com/saedalavinia/concourse-kops.git
+    branch: master
+
+- name: aws-image
+  type: docker-image
+  source:
+    repository: saedalav/aws
+    username: ((docker_username))
+    password: ((docker_password))
+
+
+
