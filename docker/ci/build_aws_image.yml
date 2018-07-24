@@ -2,7 +2,7 @@
 jobs:
 
 
-- name: setup
+- name: build-aws-image
   plan:
   - get: git-repository
     trigger: true
@@ -10,6 +10,35 @@ jobs:
     params:
       build: git-repository/docker/aws
       tag_as_latest: true
+
+- name: tag-aws-image
+  plan:
+  - aggregate:
+    - get: aws-image
+      passed: [build-aws-image]
+      trigger: true
+      params: {save: true}
+    - task: create-tag-file
+      config:
+        platform: linux
+        image_resource: 
+          type: docker-image
+          source:
+            repository: saedalav/aws
+        outputs: 
+        - name: tag
+        run:
+          path: /bin/sh
+          args:
+          - -c
+          - |
+              aws --version &> tag/tag 
+              sed  -i 's/ .*//' tag/tag
+              sed  -i 's|/|-|' tag/tag  
+  - put: aws-image
+    params:
+      load: aws-image
+      tag: tag/tag
 
 resources:
 - name: git-repository
