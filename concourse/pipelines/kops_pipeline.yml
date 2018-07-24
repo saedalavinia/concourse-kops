@@ -9,8 +9,10 @@ jobs:
     trigger: true
   - put: terraform
     params:
-      terraform_source: git-repository/terraform/concourse/terraform/route53
+      terraform_source: git-repository/concourse/terraform/route53
       env_name: route53
+    vars:
+      hosted_zone: ((hosted_zone))
 
 
 # ========================= Resource Types =========================
@@ -40,6 +42,8 @@ resources:
       bucket_path: terraform/
       access_key_id: ((aws_access_key_id))
       secret_access_key: ((aws_secret_access_key))
+    vars:
+      environment_tag: ((environment))
     env:
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
       AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))

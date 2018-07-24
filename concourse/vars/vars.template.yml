@@ -3,5 +3,7 @@
 ## Repository vars
 git_repository: https://github.com/saedalavinia/concourse-kops.git
 awscli_image: saedalav/aws
+environment: kops
+hosted_zone: 
 ci_bucket:
 ci_bucket_region:
