@@ -1,33 +1,13 @@
 ---
 jobs:
 
+## Based on the steps documented here: https://kubernetes.io/docs/setup/custom-cloud/kops/
 - name: setup
   plan:
   - aggregate:
     - get: git-repository
       trigger: true
-    - task: create-terraform-bucket
-      config:
-        platform: linux
-        image_resource: 
-          type: docker-image
-          source:
-            repository: ((awscli_image))
-        run:
-          path: /bin/sh
-          args:
-            - -c
-            - |
-                export AWS_ACCESS_KEY_ID=((s3access_aws_access_key_id))
-                export AWS_SECRET_ACCESS_KEY=((s3access_aws_secret_access_key))
-                export AWS_DEFAULT_REGION=((terraform_bucket_region))
-                aws s3 mb s3://((terraform_bucket))
-
-- name: setup
-  plan:
-  - aggregate:
-    - get: git-repository
-      trigger: true
+    - 
     - task: create-terraform-bucket
       config:
         platform: linux
@@ -48,6 +28,7 @@ jobs:
                 export AWS_DEFAULT_REGION=((terraform_bucket_region))
                 aws s3 mb s3://((terraform_bucket))
 
+
 # ========================= Resource Types =========================
 resource_types:
 
@@ -58,7 +39,7 @@ resource_types:
     tag: latest
 
 
-# ============================ Resources ============dffds================
+# ============================ Resources ============================
 
 resources:
 - name: git-repository
