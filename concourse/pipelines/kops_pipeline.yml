@@ -1,0 +1,87 @@
+---
+jobs:
+
+- name: setup
+  plan:
+  - aggregate:
+    - get: git-repository
+      trigger: true
+    - task: create-terraform-bucket
+      config:
+        platform: linux
+        image_resource: 
+          type: docker-image
+          source:
+            repository: ((awscli_image))
+        run:
+          path: /bin/sh
+          args:
+            - -c
+            - |
+                export AWS_ACCESS_KEY_ID=((s3access_aws_access_key_id))
+                export AWS_SECRET_ACCESS_KEY=((s3access_aws_secret_access_key))
+                export AWS_DEFAULT_REGION=((terraform_bucket_region))
+                aws s3 mb s3://((terraform_bucket))
+
+- name: setup
+  plan:
+  - aggregate:
+    - get: git-repository
+      trigger: true
+    - task: create-terraform-bucket
+      config:
+        platform: linux
+        image_resource: 
+          type: docker-image
+          source:
+            repository: ((awscli_image))
+        run:
+          path: /bin/sh
+          args:
+          
+          - -c
+
+            - |
+                export AWS_ACCESS_KEY_ID=((s3access_aws_access
+                _key_id))
+                export AWS_SECRET_ACCESS_KEY=((s3access_aws_secret_access_key))
+                export AWS_DEFAULT_REGION=((terraform_bucket_region))
+                aws s3 mb s3://((terraform_bucket))
+
+# ========================= Resource Types =========================
+resource_types:
+
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+    tag: latest
+
+
+# ============================ Resources ============dffds================
+
+resources:
+- name: git-repository
+  type: git
+  source:
+    uri: ((git_repository))
+    branch: master
+
+
+- name: deploy-trigger
+  type: semver
+
+
+
+     
+  source:
+    initial_version: 0.0.0
+    driver: s3
+      region_name: ((aws_region))
+      access_key_id: ((concourse_ci_s3_access_key))
+      secret_access_key: ((concourse_ci_s3_secret_key))
+      server_side_encryption: AES256
+    bucket: ((cf_domain))
+    key: applications/((dp_root_org))/trigger
+
+
