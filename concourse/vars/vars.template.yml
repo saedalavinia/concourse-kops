@@ -3,5 +3,5 @@
 ## Repository vars
 git_repository: https://github.com/saedalavinia/concourse-kops.git
 awscli_image: saedalav/aws
-terraform_bucket:
-terraform_bucket_region:
+ci_bucket:
+ci_bucket_region:

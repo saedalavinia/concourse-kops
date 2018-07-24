@@ -5,7 +5,7 @@ jobs:
 - name: setup
   plan:
   - aggregate:
-    - task: create-terraform-bucket
+    - task: create-ci-bucket
       config:
         platform: linux
         image_resource: 
@@ -17,8 +17,8 @@ jobs:
           args:
             - -c
             - |
-                aws s3 mb s3://((terraform_bucket))
+                aws s3 mb s3://((ci_bucket))
         params:
             AWS_ACCESS_KEY_ID: ((s3access_aws_access_key_id))
             AWS_SECRET_ACCESS_KEY: ((s3access_aws_secret_access_key))
-            AWS_DEFAULT_REGION: ((terraform_bucket_region))
+            AWS_DEFAULT_REGION: ((ci_bucket_region))
