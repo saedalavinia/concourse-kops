@@ -48,21 +48,32 @@ resources:
     uri: ((git_repository))
     branch: master
 
-
-- name: deploy-trigger
-  type: semver
-
-
-
-     
+- name: create-route53-records
+  type: terraform
   source:
-    initial_version: 0.0.0
-    driver: s3
-      region_name: ((aws_region))
-      access_key_id: ((concourse_ci_s3_access_key))
-      secret_access_key: ((concourse_ci_s3_secret_key))
-      server_side_encryption: AES256
-    bucket: ((cf_domain))
-    key: applications/((dp_root_org))/trigger
+    terraform_source: git-repository/terraform/concourse/terraform/route53
+    storage:
+      storage:
+        bucket: ((ci_bucket_region))
+        bucket_path: terraform/
+        access_key_id: {{s3.access_aws_access_key_id}}
+        secret_access_key: {{s3.aws_secret_access_key}}
+    vars:
+      tag_name: ((pcf_domain))
+    env:
+        AWS_ACCESS_KEY_ID: {{full.access_aws_access_key_id}}
+        AWS_SECRET_ACCESS_KEY: {{full.aws_secret_access_key}}
+
+# - name: deploy-trigger
+#   type: semver
+#   source:
+#     initial_version: 0.0.0
+#     driver: s3
+#       region_name: ((ci_bucket_region))
+#       access_key_id: ((s3.access_aws_access_key_id))
+#       secret_access_key: ((s3.aws_secret_access_key))
+#       server_side_encryption: AES256
+#     bucket: ((ci_bucket))
+#     key: ci/trigger
 
 
