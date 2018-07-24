@@ -1,8 +1,17 @@
 ---
 ## Based on the steps documented here: https://kubernetes.io/docs/setup/custom-cloud/kops/
 
+groups:
+- name: create
+  jobs:
+  - create-route53
+- name: destroy
+  jobs:
+  - destroy-route53
+
 jobs:
 - name: create-route53
+  serial_groups: [terraform-route53]
   serial: true
   plan:
   - get: git-repository
@@ -11,9 +20,27 @@ jobs:
     params:
       terraform_source: git-repository/concourse/terraform/route53
       env_name: route53
-    vars:
-      hosted_zone: ((hosted_zone))
+      vars:
+        hosted_zone: ((hosted_zone))
 
+
+
+
+# ========================= Destroy =========================
+- name: destroy-route53
+  serial_groups: [terraform-route53]
+  serial: true
+  plan:
+  - get: git-repository
+  - put: terraform
+    params:
+      terraform_source: git-repository/concourse/terraform/route53
+      env_name: route53
+      action: destroy
+      vars:
+        hosted_zone: ((hosted_zone))
+    get_params:
+      action: destroy
 
 # ========================= Resource Types =========================
 resource_types:
@@ -39,7 +66,7 @@ resources:
     storage:
       bucket: ((ci_bucket))
       region_name: ((ci_bucket_region))
-      bucket_path: terraform/
+      bucket_path: terraform/((environment))
       access_key_id: ((aws_access_key_id))
       secret_access_key: ((aws_secret_access_key))
     vars:
@@ -47,6 +74,8 @@ resources:
     env:
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
       AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+      AWS_DEFAULT_REGION: ((region))
+
 
 # - name: deploy-trigger
 #   type: semver
