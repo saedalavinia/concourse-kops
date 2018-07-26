@@ -43,7 +43,7 @@ jobs:
 
 
 # ========================= Destroy =========================
-- name: destroy-route53
+- name: destroy-route53-zone
   serial_groups: [terraform-route53]
   serial: true
   plan:
