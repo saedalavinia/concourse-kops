@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 [ "$VERBOSE" ] && set -x
 
 set -euo pipefail
