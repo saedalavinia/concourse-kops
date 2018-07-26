@@ -58,12 +58,11 @@ jobs:
     get_params:
       action: destroy
 
-- name: destroy-s3
+- name: destroy-s3-bucket
   serial_groups: [terraform-s3]
   serial: true
   plan:
   - get: git-repository
-    trigger: true
   - put: terraform
     params:
       terraform_source: git-repository/concourse/terraform/s3
