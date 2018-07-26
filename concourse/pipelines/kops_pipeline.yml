@@ -4,13 +4,16 @@
 groups:
 - name: create
   jobs:
-  - create-route53
+  - create-route53-zone
+  - create-s3-bucket
+  - deploy-k8s-cluster
 - name: destroy
   jobs:
-  - destroy-route53
+  - destroy-route53-zone
+  - destroy-s3-bucket
 
 jobs:
-- name: create-route53
+- name: create-route53-zone
   serial_groups: [terraform-route53]
   serial: true
   plan:
