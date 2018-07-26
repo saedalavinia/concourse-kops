@@ -90,6 +90,23 @@ jobs:
     get_params:
       action: destroy
 
+- name: destroy-k8s-cluster
+  serial_groups: [kops]
+  serial: true
+  plan:
+  - get: git-repository
+    passed:
+    - destroy-s3-bucket
+    - destroy-route53-zone
+    trigger: true
+  - task: deploy
+    file: git-repository/concourse/tasks/destroy-k8s-cluster.yml
+    params:
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+      AWS_DEFAULT_REGION: ((region))
+
+
 
 # ========================= Resource Types =========================
 resource_types:
