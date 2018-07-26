@@ -26,7 +26,7 @@ jobs:
       vars:
         hosted_zone: ((hosted_zone))
 
-- name: create-s3
+- name: create-s3-bucket
   serial_groups: [terraform-s3]
   serial: true
   plan:
