@@ -9,3 +9,4 @@ hosted_zone:
 ci_bucket:
 ci_bucket_region:
 kops_state_bucket:
+public_ssh_key:
