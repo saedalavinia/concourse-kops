@@ -1,0 +1,13 @@
+inputs:
+- name: git-repository
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: saedalav/kops
+    tag: latest
+
+run:
+  path: config-repo/hsmondemand/scripts/create-ci-s3-bucket.sh
