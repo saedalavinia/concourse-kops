@@ -10,4 +10,4 @@ image_resource:
     tag: latest
 
 run:
-  path: config-repo/hsmondemand/scripts/create-ci-s3-bucket.sh
+  path: git-repository/concourse/scripts/deploy-k8s-cluster.sh

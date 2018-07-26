@@ -50,7 +50,7 @@ jobs:
     - create-route53-zone
     trigger: true
   - task: deploy
-    file: git-repository/tasks/deploy-k8s-cluster.yml
+    file: git-repository/concourse/tasks/deploy-k8s-cluster.yml
     params:
       PUBLIC_KEY: ((public_ssh_key))
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
