@@ -40,6 +40,23 @@ jobs:
         bucket_name: ((kops_state_bucket))
 
 
+- name: deploy-k8s-cluster
+  serial_groups: [kops]
+  serial: true
+  plan:
+  - get: git-repository
+    passed:
+    - create-s3-bucket
+    - create-route53-zone
+    trigger: true
+  - task: deploy
+    file: git-repository/tasks/deploy-k8s-cluster.yml
+    params:
+      PUBLIC_KEY: ((public_ssh_key))
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+      AWS_DEFAULT_REGION: ((region))
+
 
 
 # ========================= Destroy =========================
